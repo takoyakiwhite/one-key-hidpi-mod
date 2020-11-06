@@ -10,6 +10,7 @@ Mod Features：
 同步DEV分支
 
 ![Modified](./img/modified.png)
+
 「无需关闭SIP，支持macOS Catalina、macOS Big Sur，其他版本未测试」
 
 
