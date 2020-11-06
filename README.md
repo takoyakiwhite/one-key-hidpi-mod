@@ -1,72 +1,88 @@
-# Enable macOS HiDPI
+# Modified by takoyakiwhite
 
-## Explanation
 
-[English](README.md) | [中文](README-zh.md)
+Mod Features：
 
- This script can simulate macOS HiDPI on a non-retina display, and have a "Native" Scaled in System Preferences.
+去除 System Integrity Protection Check（SIP检测）
 
-Some device have wake-up issue, script's second option may help, it inject a patched EDID, but another problem may exists here.
+修改全局Override路径到Library/Display
 
-Logo scaling up may not be resolved, cuz the higher resolution is faked.
+同步DEV分支
 
-System Preferences
 
-![Preferences](./img/preferences.jpg)
+「无需关闭SIP，支持macOS Catalina、macOS Big Sur，其他版本未测试」
 
-![Preferences](./img/hidpi.gif)
 
-## Usage
+Source from one-key-hidpi
 
-1.Remote Mode: Run this script in Terminal
+Modified by 「Takoyaki White」
+
+
+ 此脚本的目的是为中低分辨率的屏幕开启 HiDPI 选项，并且具有原生的 HiDPI 设置，不需要 RDM 软件即可在系统显示器设置中设置
+
+macOS 的 DPI 机制和 Windows 下不一样，比如 1080p 的屏幕在 Windows 下有 125%、150% 这样的缩放选项，而同样的屏幕在 macOS 下，缩放选项里只是单纯的调节分辨率，这就使得在默认分辨率下字体和UI看起来很小，降低分辨率又显得模糊
+
+同时，此脚本也可以通过注入修补后的 EDID 修复闪屏，或者睡眠唤醒后的闪屏问题，当然这个修复因人而异
+
+开机的第二阶段 logo 总是会稍微放大，因为分辨率是仿冒的
+
+设置：
+
+![设置](./img/preferences.jpg)
+
+![设置](./img/hidpi.gif)
+
+## 使用方法
+
+1.远程模式: 在终端输入以下命令回车即可
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/xzhih/one-key-hidpi/dev/hidpi.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/xzhih/one-key-hidpi/master/hidpi.sh)"
 ```
 
-2.Local Mode: Download ZIP, decompressing it, and double click `hidpi.command` to run
+2.本地模式: 下载项目解压,双击 `hidpi.command` 运行
 
-![RUN](./img/run.jpg)
+![运行](./img/run-zh.jpg)
 
-## Recovery
+## 恢复
 
-### Normal
+### 命令恢复
 
-Still running the script in the terminal, but choose option 3
+如果还能进系统，就再次运行命令选择选项 3 关闭 HIDPI。
 
-### Recovery mode
+### 恢复模式
 
-If you cant boot into system, or get any another issues, you can boot into macOS Recovery mode, and use the Terminal.app
+如果使用此脚本后，开机无法进入系统，请到 macos 恢复模式中或使用 clover `-x` 安全模式进入系统，打开终端
 
-There are two ways to close it. It is recommended to choose the first one
+这里有两种方式进行关闭，建议选第一种
 
-1. 
-
+1. 快捷恢复
+    
 ```bash
 ls /Volumes/
-cd /Volumes/"Your System Disk Part"/System/Library/Displays/Contents/Resources/Overrides/HIDPI
+cd /Volumes/你的系统盘/System/Library/Displays/Contents/Resources/Overrides/HIDPI
 
 ./disable
 ```
 
-2. 
+2. 手动恢复
 
-Remove your display's DisplayVendorID folder under `/System/Library/Displays/Contents/Resources/Overrides` , and move backup files
+使用终端删除 `/System/Library/Displays/Contents/Resources/Overrides` 下删除显示器 VendorID 对应的文件夹，并把 `HIDPI/backup` 文件夹中的备份复制出来。
 
-Please use the single display to execute the following commands. If it is a laptop, turn off the internal monitor when turning off the HIDPI of the external monitor.
+请使用单个显示器执行以下命令，笔记本关闭外接显示器的 HIDPI 时请关闭内置显示器
 
-In Terminal: 
+具体命令如下：
 
 ```bash
 ls /Volumes/
-cd /Volumes/"Your System Disk Part"/System/Library/Displays/Contents/Resources/Overrides
+cd /Volumes/你的系统盘/System/Library/Displays/Contents/Resources/Overrides
 EDID=($(ioreg -lw0 | grep -i "IODisplayEDID" | sed -e "/[^<]*</s///" -e "s/\>//"))
 Vid=($(echo $EDID | cut -c18-20))
 rm -rf ./DisplayVendorID-$Vid
 cp -r ./HIDPI/backup/* ./
 ```
 
-## Inspired
+## 从以下得到启发
 
 https://www.tonymacx86.com/threads/solved-black-screen-with-gtx-1070-lg-ultrafine-5k-sierra-10-12-4.219872/page-4#post-1644805
 
