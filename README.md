@@ -1,4 +1,4 @@
-# Modified by takoyakiwhite
+# Modified by Takoyaki White
 
 
 Mod Features：
