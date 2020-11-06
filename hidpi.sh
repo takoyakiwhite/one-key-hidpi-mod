@@ -1,12 +1,11 @@
 #!/bin/bash
+# Modified by Takoyaki White
 
-sipInfo=("$(csrutil status)")
+#sipInfo=("$(csrutil status)") // Don't need SIP to override
 systemVersion=($(sw_vers -productVersion | cut -d "." -f 2))
 systemLanguage=($(locale | grep LANG | sed s/'LANG='// | tr -d '"' | cut -d "." -f 1))
 
-disableSIP="Need to disable SIP"
-langRemoteMode="Remote Mode"
-langLocalMode="Local Mode"
+#disableSIP="Need to disable SIP" // Don't need SIP to override
 langDisplay="Display"
 langMonitors="Monitors"
 langIndex="Index"
@@ -41,9 +40,7 @@ langChooseResOp5="(5) 3000x2000 Display"
 langChooseResOpCustom="(6) Manual input resolution"
 
 if [[ "${systemLanguage}" == "zh_CN" ]]; then 
-    disableSIP="需要关闭 SIP"
-    langRemoteMode="远程模式"
-    langLocalMode="本地模式"
+    #disableSIP="需要关闭 SIP" // Don't need SIP to override
     langDisplay="显示器"
     langMonitors="显示器"
     langIndex="序号"
@@ -85,18 +82,16 @@ downloadHost="https://raw.githubusercontent.com/xzhih/one-key-hidpi/master"
 shellDir="$(dirname $0)"
 
 if [ -d "${shellDir}/displayIcons" ];then
-    echo $langLocalMode
     downloadHost="file://${shellDir}"
-else
-    echo $langRemoteMode
 fi
 
-if [[ "${sipInfo}" == *"Filesystem Protections: disabled"* ]] || [[ "$(awk '{print $5}' <<< "${sipInfo}")" == "disabled." ]] || [[ "$(awk '{print $5}' <<< "${sipInfo}")" == "disabled" ]]; then
-    :
-else
-    echo "${disableSIP}";
-    exit 1
-fi
+# Don't need SIP to override
+#if [[ "${sipInfo}" == *"Filesystem Protections: disabled"* ]] || [[ "$(awk '{print $5}' <<< "${sipInfo}")" == "disabled." ]] || [[ "$(awk '{print $5}' <<< "${sipInfo}")" == "disabled" ]]; then
+#    :
+#else
+#    echo "${disableSIP}";
+#    exit 1
+#fi
 
 function get_edid()
 {
@@ -179,7 +174,7 @@ cat << EEF
  |  __  |   | |   | |  | | |  ___/    | |  
  | |  | |  _| |_  | |__| | | |       _| |_ 
  |_|  |_| |_____| |_____/  |_|      |_____|
-                                           
+        Modified by Takoyaki White                                  
 ============================================
 EEF
     #
@@ -188,15 +183,13 @@ EEF
     thisDir=$(dirname $0)
     libDisplaysDir="/Library/Displays"
     thatDir="${libDisplaysDir}/Contents/Resources/Overrides"
-    thatSysDir="/System${thatDir}"
     Overrides="\/Library\/Displays\/Contents\/Resources\/Overrides"
-    sysOverrides="\/System${Overrides}"
     
     DICON="com\.apple\.cinema-display"
-    imacicon=${sysOverrides}"\/DisplayVendorID\-610\/DisplayProductID\-a032\.tiff"
-    mbpicon=${sysOverrides}"\/DisplayVendorID\-610\/DisplayProductID\-a030\-e1e1df\.tiff"
-    mbicon=${sysOverrides}"\/DisplayVendorID\-610\/DisplayProductID\-a028\-9d9da0\.tiff"
-    lgicon=${sysOverrides}"\/DisplayVendorID\-1e6d\/DisplayProductID\-5b11\.tiff"
+    imacicon=${Overrides}"\/DisplayVendorID\-610\/DisplayProductID\-a032\.tiff"
+    mbpicon=${Overrides}"\/DisplayVendorID\-610\/DisplayProductID\-a030\-e1e1df\.tiff"
+    mbicon=${Overrides}"\/DisplayVendorID\-610\/DisplayProductID\-a028\-9d9da0\.tiff"
+    lgicon=${Overrides}"\/DisplayVendorID\-1e6d\/DisplayProductID\-5b11\.tiff"
     proxdricon=${Overrides}"\/DisplayVendorID\-610\/DisplayProductID\-ae2f\_Landscape\.tiff"
 
     if [[ ! -d ${thatDir}/HIDPI ]]; then
@@ -325,7 +318,7 @@ case ${logo} in
         ;;
     4) Picon=${lgicon}
         RP=("11" "47" "202" "114")
-        cp ${thatSysDir}/DisplayVendorID-1e6d/DisplayProductID-5b11.icns ${thisDir}/tmp/DisplayVendorID-${Vid}/DisplayProductID-${Pid}.icns
+        cp ${$thatDir}/DisplayVendorID-1e6d/DisplayProductID-5b11.icns ${thisDir}/tmp/DisplayVendorID-${Vid}/DisplayProductID-${Pid}.icns
         ;;
     5) Picon=${proxdricon}
         RP=("5" "45" "216" "121")
